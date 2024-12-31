@@ -1,0 +1,3 @@
+/home/amm/Projects/ledit/build/CMakeFiles/ledit.dir
+/home/amm/Projects/ledit/build/CMakeFiles/edit_cache.dir
+/home/amm/Projects/ledit/build/CMakeFiles/rebuild_cache.dir

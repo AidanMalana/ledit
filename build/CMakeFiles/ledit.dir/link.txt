@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/ledit.dir/main.c.o -o ledit  -Wl,-rpath,/usr/local/lib /usr/local/lib/libraylib.so -L/usr/local/lib -lraylib 
