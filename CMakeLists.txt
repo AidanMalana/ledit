@@ -5,7 +5,8 @@ find_package(raylib 3.0 REQUIRED) # Requires at least version 3.0
 
 set(CMAKE_C_STANDARD 11) # Requires C11 standard
 
-add_executable(${PROJECT_NAME} main.c)
+set(SOURCES main.c) # Add source + header files here **Research how to build my own c librarie
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} raylib)
 
