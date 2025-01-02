@@ -2,16 +2,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct {
     int x;
     int y;
     Rectangle rect;
-    Rectangle textureRec; // Use a spritemap to draw tiles, don't assign each tile an individual texture
+    int tile; // Use a spritemap to draw tiles, don't assign each tile an individual texture
 } Tile;
 
 void UpdateDrawFrame(void);     // Update and Draw one frame
 void DrawTilemap(RenderTexture2D, Tile*);         // Draw the tilemap
+void DrawMouse(RenderTexture2D); // Draw the mouse 
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
@@ -29,6 +31,7 @@ RenderTexture2D renderTarget;
 int tileSize = 8; // Square for now, add support for rectangles or different shapes later?
 int tileCount = 10;
 int defaultTile = 9; // Sky
+int selectedTile = 0;
 Rectangle *tileset;
 Texture2D tilesetTexture;
 
@@ -48,6 +51,7 @@ int main()
     //--------------------------------------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "ledit - Legato Editor");
     renderTarget = LoadRenderTexture(virtualWidth, virtualHeight);
+    HideCursor();
 
     tilesetTexture = LoadTexture("resources/art/tiles.png");
     tileset = calloc(tileCount, sizeof(Rectangle)); 
@@ -100,7 +104,7 @@ int main()
             tilemap[(int)tmpX * worldHeight + (int)tmpY].rect.y = tmpY * tileSize;
             tilemap[(int)tmpX * worldHeight + (int)tmpY].rect.width = tileSize;
             tilemap[(int)tmpX * worldHeight + (int)tmpY].rect.height = tileSize;
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].textureRec = tileset[(int)tmpZ];
+            tilemap[(int)tmpX * worldHeight + (int)tmpY].tile = (int)tmpZ;
         }
         lineCount++;
     }
@@ -125,6 +129,62 @@ int main()
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
+        // Select tiles to use
+        switch (GetKeyPressed()) {
+            case KEY_ZERO: 
+                selectedTile = 0;
+                break;
+            case KEY_ONE: 
+                selectedTile = 1;
+                break;
+            case KEY_TWO: 
+                selectedTile = 2;
+                break;
+            case KEY_THREE: 
+                selectedTile = 3;
+                break;
+            case KEY_FOUR: 
+                selectedTile = 4;
+                break;
+            case KEY_FIVE: 
+                selectedTile = 5;
+                break;
+            case KEY_SIX: 
+                selectedTile = 6;
+                break;
+            case KEY_SEVEN: 
+                selectedTile = 7;
+                break;
+            case KEY_EIGHT: 
+                selectedTile = 8;
+                break;
+            case KEY_NINE: 
+                selectedTile = 9;
+                break;
+            case KEY_E:
+                selectedTile = 9;
+                break;
+        }
+
+        // Save map to file 
+        if (IsKeyDown(KEY_S)) {
+            mapFile = fopen(mapFileName, "w");
+            fprintf(mapFile, "%d %d %d\n", worldWidth, worldHeight, tileSize);
+            for (int i = 0; i < worldWidth; i++) {
+                for (int j = 0; j < worldHeight; j++) {
+                    fprintf(mapFile, "%d %d %d\n", i, j, tilemap[i * worldHeight + j].tile);
+                }
+            }
+            fclose(mapFile);
+            mapFile = NULL;
+
+        }
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            Vector2 mousePos = GetMousePosition();
+            int x = round((mousePos.x)/scale/tileSize);
+            int y = round((mousePos.y)/scale/tileSize);
+            tilemap[x * worldHeight + y].tile = selectedTile;
+        }
         UpdateDrawFrame();
     }
 
@@ -164,6 +224,7 @@ void UpdateDrawFrame(void)
 
         ClearBackground(RAYWHITE);
         DrawTilemap(renderTarget, tilemap);
+        DrawMouse(renderTarget);
         
     EndTextureMode();
 
@@ -187,13 +248,15 @@ void DrawTilemap(RenderTexture2D target, Tile *tilemap) {
     for (int i = 0; i < worldWidth; i++) {
         for (int j = 0; j < worldHeight; j++) {
             DrawTextureRec(tilesetTexture, 
-                tilemap[i * worldHeight + j].textureRec,
+                tileset[tilemap[i * worldHeight + j].tile],
                 (Vector2) {i * tileSize, j * tileSize}, 
                 WHITE);
-            // DrawTextureRec(tilesetTexture, 
-            //     (Rectangle) {0, 0, tileSize, tileSize},
-            //     (Vector2) {i * tileSize, j * tileSize}, 
-            //     WHITE);
         }
     }
+}
+
+void DrawMouse(RenderTexture2D target) {
+    Vector2 mousePos = GetMousePosition();
+    DrawRectangle(round((mousePos.x)/scale/tileSize)*tileSize-1, round((mousePos.y)/scale/tileSize)*tileSize-1, tileSize+2, tileSize+2, YELLOW);
+    DrawTextureRec(tilesetTexture, tileset[selectedTile], (Vector2) {round((mousePos.x)/scale/tileSize)*tileSize, round((mousePos.y)/scale/tileSize)*tileSize}, WHITE);
 }

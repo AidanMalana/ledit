@@ -8,7 +8,7 @@ set(CMAKE_C_STANDARD 11) # Requires C11 standard
 set(SOURCES main.c) # Add source + header files here **Research how to build my own c librarie
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} raylib)
+target_link_libraries(${PROJECT_NAME} raylib m)
 
 # Checks if OSX and links appropriate frameworks (only required on MacOS)
 if (APPLE)
