@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <stdio.h>
 
 #ifndef UTIL_H
 #define UTIL_H
@@ -12,5 +13,6 @@ typedef struct {
 
 void DrawTilemap(RenderTexture2D target, Texture2D tt, Rectangle *ts, Tile *tilemap, int ww, int wh, int tSize);
 Rectangle* LoadTileset(char *path, int tileCount, int tileSize, int *defaultTile);
+Tile* LoadTilemap(Tile *tilemap, FILE *mapFile, char *mapFileName, int ww, int wh, int tileSize);
 
 #endif

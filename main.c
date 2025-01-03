@@ -60,7 +60,7 @@ int main()
     HideCursor();
 
     tilesetTexture = LoadTexture("resources/art/tiles.png");
-    LoadTileset("resources/art/tiles.png", 10, 8, &defaultTile);
+    tileset = LoadTileset("resources/art/tiles.png", 10, 8, &defaultTile);
 
     mapFileName = malloc(100);
     if (DirectoryExists("levels")) {
@@ -78,6 +78,7 @@ int main()
             mapFile = fopen("levels/level.txt", "r");
             fscanf(mapFile, "%d %d %d", &worldWidth, &worldHeight, &tileSize);
             fclose(mapFile);
+            mapFile = NULL;
         }
         strcpy(mapFileName, "levels/level.txt");
     } else {
@@ -93,28 +94,8 @@ int main()
         fclose(mapFile);
         mapFile = NULL;
     }
-    mapFile = fopen(mapFileName, "r");
-    tilemap = calloc(worldHeight * worldWidth, sizeof(Tile));
-    char line[1024];
-    int lineCount = 0;
-    int tmpX, tmpY, tmpZ;
-    while (fgets(line, sizeof line, mapFile) != NULL) {
-        if (lineCount > 0) {
-            // I think the better way to do this would be to use JSON or something, or at the very least use strtol, but I just want to try this for now
-            sscanf(line, "%d %d %d", &tmpX, &tmpY, &tmpZ); // X and Y will need to be in units of tiles not pixels
-            // I never actually use the x or y for anything (hopefully)
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].x = tmpX;
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].y = tmpY;
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].rect.x = tmpX * tileSize;
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].rect.y = tmpY * tileSize;
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].rect.width = tileSize;
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].rect.height = tileSize;
-            tilemap[(int)tmpX * worldHeight + (int)tmpY].tile = (int)tmpZ;
-        }
-        lineCount++;
-    }
-    fclose(mapFile);
-    mapFile = NULL;
+
+    tilemap = LoadTilemap(tilemap, mapFile, "levels/level.txt", worldWidth, worldHeight, tileSize);
 
     SetTargetFPS(60);   // Set our game to run at 60 frames-per-second
     SetExitKey(KEY_Q);
@@ -189,15 +170,19 @@ int main()
     //--------------------------------------------------------------------------------------
     if (tileset != NULL) {
         free(tileset);
+        tileset = NULL;
     }
     if (tilemap != NULL) {
         free(tilemap);
+        tilemap = NULL;
     }
     if (mapFileName != NULL) {
         free(mapFileName);
+        mapFileName = NULL;
     }
     if (mapFile != NULL) {
         fclose(mapFile);
+        mapFile = NULL;
     }
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
