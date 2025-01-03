@@ -60,13 +60,7 @@ int main()
     HideCursor();
 
     tilesetTexture = LoadTexture("resources/art/tiles.png");
-    tileset = calloc(tileCount, sizeof(Rectangle)); 
-        for (int i = 0; i < tileCount; i++) { // sizeof evaluates the size of the type, not the size of the array. sizeof() only works for statically declared arrays
-        tileset[i].width = tileSize;
-        tileset[i].height = tileSize;
-        tileset[i].x = i % 3 * tileSize;
-        tileset[i].y = i / 3 * tileSize;
-    }
+    LoadTileset("resources/art/tiles.png", 10, 8, &defaultTile);
 
     mapFileName = malloc(100);
     if (DirectoryExists("levels")) {

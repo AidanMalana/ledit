@@ -11,5 +11,6 @@ typedef struct {
 } Tile;
 
 void DrawTilemap(RenderTexture2D target, Texture2D tt, Rectangle *ts, Tile *tilemap, int ww, int wh, int tSize);
+Rectangle* LoadTileset(char *path, int tileCount, int tileSize, int *defaultTile);
 
 #endif
