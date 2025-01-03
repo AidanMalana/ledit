@@ -3,20 +3,13 @@
 #include "raylib.h"
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
+#include "util.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 
-typedef struct {
-    int x;
-    int y;
-    Rectangle rect;
-    int tile; // Use a spritemap to draw tiles, don't assign each tile an individual texture
-} Tile;
-
 void UpdateDrawFrame(void);     // Update and Draw one frame
-void DrawTilemap(RenderTexture2D, Tile*);         // Draw the tilemap
 void DrawMouse(RenderTexture2D); // Draw the mouse 
 void saveMap();
 void resizeTileMap();
@@ -233,7 +226,7 @@ void UpdateDrawFrame(void)
     BeginTextureMode(renderTarget);
 
         ClearBackground(RAYWHITE);
-        DrawTilemap(renderTarget, tilemap);
+        DrawTilemap(renderTarget, tilesetTexture, tileset, tilemap, worldWidth, worldHeight, tileSize);
         DrawMouse(renderTarget);
         
     EndTextureMode();
@@ -279,18 +272,6 @@ void UpdateDrawFrame(void)
 
     EndDrawing();
     //----------------------------------------------------------------------------------
-}
-
-void DrawTilemap(RenderTexture2D target, Tile *tilemap) {
-    DrawTexture(tilesetTexture, 160, 90, WHITE);
-    for (int i = 0; i < worldWidth; i++) {
-        for (int j = 0; j < worldHeight; j++) {
-            DrawTextureRec(tilesetTexture, 
-                tileset[tilemap[i * worldHeight + j].tile],
-                (Vector2) {i * tileSize, j * tileSize}, 
-                WHITE);
-        }
-    }
 }
 
 void DrawMouse(RenderTexture2D target) {
