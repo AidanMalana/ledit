@@ -5,14 +5,33 @@
 #define UTIL_H
 
 typedef struct {
-    int x;
-    int y;
-    Rectangle rect;
-    int tile; // Use a spritemap to draw tiles, don't assign each tile an individual texture
+  Rectangle rect;
+  int tile; // Use a spritemap to draw tiles, don't assign each tile an
+            // individual texture
 } Tile;
 
-void DrawTilemap(RenderTexture2D target, Texture2D tt, Rectangle *ts, Tile *tilemap, int ww, int wh, int tSize);
-Rectangle* LoadTileset(char *path, int tileCount, int tileSize, int *defaultTile);
-Tile* LoadTilemap(Tile *tilemap, FILE *mapFile, char *mapFileName, int ww, int wh, int tileSize);
+typedef struct {
+  Vector2 pos;
+  Rectangle size;
+  Tile tile;
+} Cell;
+
+typedef struct {
+  Vector2 pos;
+  Vector2 moveRemainder;
+  Vector2 velocity;
+  Vector2 maxVelocity;
+  bool canJump;
+  Rectangle body;
+} Actor;
+
+void DrawTilemap();
+Rectangle *LoadTileset();
+Tile *LoadTilemap();
+
+void UpdateActor(Actor *actor, Tile *tilemap, int worldWidth, int worldHeight);
+void ActorMoveX(Actor *actor, Tile *tilemap, int worldWidth, int worldHeight);
+void ActorMoveY(Actor *actor, Tile *tilemap, int worldWidth, int worldHeight);
+bool ActorCollideAt(Actor *actor, Tile *tilemap, int worldWidth, int worldHeight, Rectangle actorCollider);
 
 #endif
